@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Privado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-4">
+    <div class="relative max-w-md w-full bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20"></div>
+        
+        <div class="relative z-10 p-8">
+            <div class="text-center mb-8">
+                <div class="mx-auto w-24 h-24 bg-blue-900/30 rounded-full flex items-center justify-center mb-6 pulse">
+                    <i class="fas fa-lock text-white text-4xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white mb-2">Acceso Privado</h1>
+                <p class="text-gray-400">Ingresa el código de seguridad</p>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="relative">
+                    <div class="flex justify-center">
+                        <div id="codeDisplay" class="flex space-x-3 mb-6">
+                            <div class="w-12 h-16 bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
+                                <span class="text-white text-2xl">•</span>
+                            </div>
+                            <div class="w-12 h-16 bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
+                                <span class="text-white text-2xl">•</span>
+                            </div>
+                            <div class="w-12 h-16 bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
+                                <span class="text-white text-2xl">•</span>
+                            </div>
+                            <div class="w-12 h-16 bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
+                                <span class="text-white text-2xl">•</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">1</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">2</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">3</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">4</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">5</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">6</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">7</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">8</button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">9</button>
+                        <button class="keypad-btn bg-blue-900/70 hover:bg-blue-800 text-white h-14 rounded-lg font-medium transition-colors col-span-2">
+                            <i class="fas fa-key mr-2"></i> Validar
+                        </button>
+                        <button class="keypad-btn bg-gray-700 hover:bg-gray-600 text-white h-14 rounded-lg font-medium transition-colors">0</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar si ya está autenticado
+        if (localStorage.getItem('authenticated') === 'true') {
+            window.location.href = 'historia.html'; // Redirigir si ya está autenticado
+        }
+
+        const CORRECT_CODE = '2802';
+        let enteredCode = '';
+        const codeDisplay = document.getElementById('codeDisplay');
+        const keypadButtons = document.querySelectorAll('.keypad-btn');
+        
+        // Actualizar display del código
+        function updateCodeDisplay() {
+            const codeDigits = codeDisplay.children;
+            for (let i = 0; i < codeDigits.length; i++) {
+                if (i < enteredCode.length) {
+                    codeDigits[i].querySelector('span').textContent = enteredCode[i];
+                } else {
+                    codeDigits[i].querySelector('span').textContent = '•';
+                }
+            }
+        }
+        
+        // Manejar pulsación de teclas
+        keypadButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.textContent.trim();
+                
+                if (value === 'Validar') {
+                    if (enteredCode === CORRECT_CODE) {
+                        // Autenticación exitosa
+                        localStorage.setItem('authenticated', 'true');
+                        window.location.href = 'historia.html';
+                    } else {
+                        // Código incorrecto
+                        codeDisplay.classList.add('shake');
+                        setTimeout(() => {
+                            codeDisplay.classList.remove('shake');
+                        }, 500);
+                        
+                        enteredCode = '';
+                        updateCodeDisplay();
+                    }
+                } else if (!isNaN(value) && enteredCode.length < 4) {
+                    if (value === '0' || value === '1' || value === '2' || value === '3' || 
+                        value === '4' || value === '5' || value === '6' || 
+                        value === '7' || value === '8' || value === '9') {
+                        enteredCode += value;
+                        updateCodeDisplay();
+                    }
+                }
+            });
+        });
+        
+        // Manejar teclado físico
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && enteredCode.length === 4) {
+                if (enteredCode === CORRECT_CODE) {
+                    localStorage.setItem('authenticated', 'true');
+                    window.location.href = 'historia.html';
+                } else {
+                    codeDisplay.classList.add('shake');
+                    setTimeout(() => {
+                        codeDisplay.classList.remove('shake');
+                    }, 500);
+                    enteredCode = '';
+                    updateCodeDisplay();
+                }
+            } else if (!isNaN(e.key) && enteredCode.length < 4) {
+                enteredCode += e.key;
+                updateCodeDisplay();
+            } else if (e.key === 'Backspace') {
+                enteredCode = enteredCode.slice(0, -1);
+                updateCodeDisplay();
+            }
+        });
+    </script>
+</body>
+</html>

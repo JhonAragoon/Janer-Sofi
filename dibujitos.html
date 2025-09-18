@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestros Dibujitos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Variables de color para consistencia */
+        :root {
+            --color-primary: #ff6b6b;
+            --color-secondary: #ffecef;
+            --color-dark: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            /* Fondo coherente con la página de historia */
+            /* Eliminamos background-attachment: fixed; del body principal para móviles */
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('img/hf.jpg') no-repeat center center; /* Eliminado 'fixed' */
+            background-size: cover;
+            color: #eee; /* Color de texto más claro para el fondo oscuro */
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la ventana */
+            display: flex;
+            flex-direction: column;
+            /* Añadimos esto para que el fondo se desplace en móviles */
+            background-attachment: scroll; 
+        }
+
+        /* Media query para aplicar 'fixed' solo en pantallas grandes (PC) */
+        @media (min-width: 769px) {
+            body {
+                background-attachment: fixed;
+            }
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            /* Fondo y estilos coherentes con la página de historia */
+            background: rgba(255, 107, 107, 0.2); /* Fondo semitransparente */
+            backdrop-filter: blur(10px); /* Efecto de desenfoque */
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.8rem; /* Ligeramente ajustado */
+            margin-bottom: 10px;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.5); /* Sombra de texto */
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #f0f0f0;
+        }
+        
+        .galeria-dibujos {
+            display: grid;
+            /* Ajuste para que en móvil haya 1 o 2 columnas, y en PC más */
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajustado para mejor adaptación */
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-grow: 1; /* Permite que la galería ocupe el espacio disponible */
+            padding: 0 10px; /* Añadido padding horizontal para evitar que los bordes toquen la pantalla */
+        }
+        
+        .tarjeta-dibujo {
+            background: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            backdrop-filter: blur(5px); /* Efecto de desenfoque */
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+        }
+        
+        .tarjeta-dibujo:hover {
+            transform: translateY(-8px) scale(1.02); /* Efecto más pronunciado */
+            box-shadow: 0 12px 25px rgba(0,0,0,0.3); /* Sombra más grande */
+        }
+        
+        .contenedor-imagen {
+            height: 250px; /* Altura fija para las imágenes */
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Separador sutil */
+        }
+        
+        .dibujo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Asegura que la imagen cubra el contenedor sin distorsionarse */
+            transition: transform 0.5s ease;
+        }
+        
+        .tarjeta-dibujo:hover .dibujo {
+            transform: scale(1.08); /* Zoom más notorio */
+        }
+        
+        .pie-dibujo {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3); /* Fondo más oscuro para el pie */
+            color: #fff; /* Texto blanco */
+        }
+        
+        .autor {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem; /* Ligeramente más grande */
+            color: var(--color-primary); /* Usa la variable de color */
+            margin-top: 5px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            color: #aaa; /* Color de texto más suave */
+            font-size: 1.1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05); /* Separador */
+        }
+
+        /* Botón de volver atrás - Estilo coherente con la página de historia */
+        .btn-volver {
+            display: block;
+            margin: 40px auto; /* Más margen */
+            background: var(--color-primary);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+            position: relative;
+            overflow: hidden;
+            text-decoration: none; /* Para asegurar que no tenga subrayado si es un <a> */
+            text-align: center;
+            max-width: 300px; /* Limita el ancho del botón */
+        }
+
+        .btn-volver::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn-volver:hover::before {
+            left: 100%;
+        }
+
+        .btn-volver:hover {
+            transform: translateY(-5px) scale(1.02); /* Efecto más dinámico */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px; /* Menos padding en móvil */
+                background-attachment: scroll; /* Asegura que el fondo se desplace en móvil */
+            }
+
+            header {
+                padding: 30px 0;
+                margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 2.8rem; /* Ajuste para móvil */
+            }
+            
+            .galeria-dibujos {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Columnas más pequeñas para móviles */
+                gap: 15px; /* Menos espacio entre tarjetas */
+                padding: 0; /* Eliminar padding horizontal para aprovechar el ancho */
+            }
+
+            .tarjeta-dibujo {
+                border-radius: 10px; /* Bordes ligeramente menos redondeados */
+            }
+
+            .contenedor-imagen {
+                height: 150px; /* Altura de imagen ajustada para móvil */
+            }
+
+            .pie-dibujo {
+                padding: 10px;
+            }
+
+            .autor {
+                font-size: 1.2rem;
+            }
+
+            .btn-volver {
+                padding: 12px 25px;
+                font-size: 1rem;
+                margin: 30px auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            header p {
+                font-size: 1rem;
+            }
+            .galeria-dibujos {
+                grid-template-columns: 1fr; /* Una sola columna en pantallas muy pequeñas */
+                gap: 10px;
+            }
+            .contenedor-imagen {
+                height: 200px; /* Aumentar un poco la altura para que se vea mejor la imagen individual */
+            }
+            .autor {
+                font-size: 1.1rem;
+            }
+            footer {
+                font-size: 0.9rem;
+                padding: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Verificar desbloqueo -->
+    <script>
+        if(!localStorage.getItem('desbloqueado')) {
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <header>
+        <h1>Nuestros Dibujitos</h1>
+        <p>Cada uno hecho con mucho amor</p>
+    </header>
+    
+    <div class="galeria-dibujos">
+        <!-- Dibujo 1 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d01.jpg" alt="Dibujo 1" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 2 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d2.jpg" alt="Dibujo 2" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 3 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d3.jpg" alt="Dibujo 3" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 4 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d4.jpg" alt="Dibujo 4" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 5 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d5.jpg" alt="Dibujo 5" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 6 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d6.jpg" alt="Dibujo 6" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 7 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d7.jpg" alt="Dibujo 7" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 8 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d8.jpg" alt="Dibujo 8" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 9 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d9.jpg" alt="Dibujo 9" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 10 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d10.jpg" alt="Dibujo 10" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 11 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d11.jpg" alt="Dibujo 11" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 12 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d12.jpg" alt="Dibujo 12" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 13 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d13.jpg" alt="Dibujo 13" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 14 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d14.jpg" alt="Dibujo 14" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 15 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d15.jpg" alt="Dibujo 15" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 16 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d16.jpg" alt="Dibujo 16" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 17 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d17.jpg" alt="Dibujo 17" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 18 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d18.jpg" alt="Dibujo 18" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 19 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d19.jpg" alt="Dibujo 19" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 20 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d20.jpg" alt="Dibujo 20" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 21 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d21.jpg" alt="Dibujo 21" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Sofi</div>
+            </div>
+        </div>
+        
+        <!-- Dibujo 22 -->
+        <div class="tarjeta-dibujo">
+            <div class="contenedor-imagen">
+                <img src="img/d22.jpg" alt="Dibujo 22" class="dibujo" loading="lazy">
+            </div>
+            <div class="pie-dibujo">
+                <div class="autor">Por: Janer</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botón de volver atrás -->
+    <a href="historia.html" class="btn-volver">Volver a la Historia</a>
+    
+    <footer>
+        <p>Cada dibujo es un pedacito de nuestro corazón  ❤️</p>
+    </footer>
+</body>
+</html>
